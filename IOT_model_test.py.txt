@@ -1,0 +1,26 @@
+import tensorflow as tf
+import pandas as pd
+import numpy as np
+
+from sklearn.preprocessing import StandardScaler
+
+# Load the saved model
+model = tf.keras.models.load_model('IOT')
+
+# Load the CSV file containing the unseen data
+X = pd.read_csv('testt.csv')
+
+
+
+# Preprocess the data using the same preprocessing steps as the training data
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+X = np.reshape(X, (X.shape[0], 1, X.shape[1]))
+# Make predictions using the model
+predictions = model.predict(X)
+print(predictions)
+if predictions[0][0]=='nan nan':
+    print("device is not infected")
+# Evaluate the model's performance on the unseen data
+#loss, accuracy = model.evaluate(X, y, verbose=0)
+#print(f'Loss: {loss:.4f} - Accuracy: {accuracy:.2f}')

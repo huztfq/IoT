@@ -1,0 +1,39 @@
+import pyshark
+
+# Specify the input and output files
+input_file = 'aaaa.pcap'
+output_file = 'output.csv'
+
+# Create a list of fields to include in the output
+fields = ['duration', 'orig_bytes', 'resp_bytes', 'missed_bytes', 'orig_pkts', 'orig_ip_bytes', 'resp_pkts', 'resp_ip_bytes', 'label', 'proto_icmp', 'proto_tcp', 'proto_udp', 'conn_state_OTH', 'conn_state_REJ', 'conn_state_RSTO', 'conn_state_RSTOS0', 'conn_state_RSTR', 'conn_state_RSTRH', 'conn_state_S0', 'conn_state_S1', 'conn_state_S2', 'conn_state_S3', 'conn_state_SF', 'conn_state_SH', 'conn_state_SHR']
+
+# Open the input file using pyshark
+capture = pyshark.FileCapture(input_file)
+
+# Open the output file for writing
+with open(output_file, 'w') as f:
+    # Write the field names as the first line
+    f.write(','.join(fields) + '\n')
+
+    # Iterate over each packet in the capture
+    for packet in capture:
+        # Create a list to hold the values for each field
+        values = []
+
+        # Add the value for each field to the list
+        for field in fields:
+            # Get the value for the field
+            value = getattr(packet, field, '')
+
+            # If the value is a field_value object, get the actual value
+            if hasattr(value, 'showname_value'):
+                value = value.showname_value
+
+            # Add the value to the list
+            values.append(value)
+
+        # Write the values to the output file as a CSV line
+        f.write(','.join(values) + '\n')
+
+# Close the capture
+capture.close()
